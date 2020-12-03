@@ -34,5 +34,5 @@ pip install .
 
 ### Usage
 ```
-pythonw 
+pythonw main.py
 ```
