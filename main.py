@@ -4,9 +4,10 @@
 
 import os
 import time
+import tempfile
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
-import tempfile
+
 
 image = f"{tempfile.gettempdir()}\pil_text.ico"
 
