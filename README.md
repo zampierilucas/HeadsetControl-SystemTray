@@ -1,2 +1,2 @@
-HeadPhoneControl-SystemTray
+HeadsetControl-SystemTray
 =====
