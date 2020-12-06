@@ -17,7 +17,7 @@ r, g, b = 255, 255, 255
 # Center icon
 pos = 10
 
-systray = SysTrayIcon(image, "Systray")
+systray = SysTrayIcon(image, "HeadsetControl-SystemTray")
 font_type = ImageFont.truetype("seguisb.ttf", 37)
 
 
