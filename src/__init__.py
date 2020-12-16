@@ -1,1 +1,1 @@
- from .HeadsetControl-SystemTray import *
+from src import HeadsetControl_SystemTray

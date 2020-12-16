@@ -1,13 +1,12 @@
 # TODO Added hysteresis
-# install PIL :  pip install Pillow
-# install infi.systray : pip install infi.systray
 
 import os
 import time
 import tempfile
+import webbrowser
+
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
-
 
 image = f"{tempfile.gettempdir()}\pil_text.ico"
 
@@ -17,8 +16,12 @@ r, g, b = 255, 255, 255
 # Center icon
 pos = 10
 
-systray = SysTrayIcon(image, "HeadsetControl-SystemTray")
-font_type = ImageFont.truetype("seguisb.ttf", 37)
+main_loop = True
+
+
+def on_quit_callback(systray):
+    global main_loop
+    main_loop = False
 
 
 def headset_status():
@@ -64,28 +67,38 @@ def headset_status():
     return systray_output
 
 
-while True:
-    # Create image
-    img = Image.new('RGBA', (50, 50), color=(r, g, b, 0))
-    systray_icon = ImageDraw.Draw(img)
+def about(systray):
+    webbrowser.open('https://github.com/zampierilucas/HeadsetControl-SystemTray')  # Go to example.com
 
-    # Add rectangle
-    systray_icon.rectangle([(0, 100), (50, 50)], fill=(39, 112, 229), outline=None)
 
-    result = headset_status()
+def mySystray():
+    menu_options = (("About", None, about),)
+    systray = SysTrayIcon(image, "HeadsetControl-SystemTray", menu_options, on_quit=on_quit_callback)
+    font_type = ImageFont.truetype("seguisb.ttf", 37)
 
-    # Headset not connected
-    if result == -1:
-        systray.shutdown()
+    while main_loop:
+        # Create image
+        img = Image.new('RGBA', (50, 50), color=(r, g, b, 0))
+        systray_icon = ImageDraw.Draw(img)
+        systray_icon.rectangle([(0, 100), (50, 50)], fill=(39, 112, 229), outline=None)
 
-    # Update state
-    else:
-        systray.start()
+        result = headset_status()
 
-        # add text to the image
-        systray_icon.text((pos, -1), f"{result}", fill=(r, g, b), font=font_type)
+        # Headset not connected
+        if result == -1:
+            systray.shutdown()
 
-        img.save(image)
-        systray.update(icon=image)
+        # Update state
+        else:
+            systray.start()
 
-    time.sleep(10)
+            # add text to the image
+            systray_icon.text((pos, -1), f"{result}", fill=(r, g, b), font=font_type)
+
+            img.save(image)
+            systray.update(icon=image)
+
+        time.sleep(10)
+
+
+mySystray()
