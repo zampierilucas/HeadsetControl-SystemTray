@@ -71,9 +71,8 @@ def about(systray):
     webbrowser.open('https://github.com/zampierilucas/HeadsetControl-SystemTray')  # Go to example.com
 
 
-def mySystray():
-    menu_options = (("About", None, about),)
-    systray = SysTrayIcon(image, "HeadsetControl-SystemTray", menu_options, on_quit=on_quit_callback)
+def mySystray(systray):
+    global font_type
     font_type = ImageFont.truetype("seguisb.ttf", 37)
 
     while main_loop:
@@ -101,4 +100,8 @@ def mySystray():
         time.sleep(10)
 
 
-mySystray()
+menu_options = (("About", None, about),)
+systray = SysTrayIcon(image, "HeadsetControl-SystemTray", menu_options, on_quit=on_quit_callback)
+mySystray(systray)
+
+systray.shutdown()
