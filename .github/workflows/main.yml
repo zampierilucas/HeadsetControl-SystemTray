@@ -26,4 +26,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: HeadsetControl-SystemTray
-          path: ./dist/windows/HeadsetControl_SystemTray.exe
+          path: /dist/windows\HeadsetControl_SystemTray.exe
