@@ -23,7 +23,10 @@ jobs:
         with:
           path: src
         
-      - uses: actions/upload-artifact@v2
-        with:
-          name: HeadsetControl-SystemTray
-          path: /dist/windows\HeadsetControl_SystemTray.exe
+      - uses: "marvinpinto/action-automatic-releases@latest"	
+        with:	
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"	
+          automatic_release_tag: "latest"	
+          prerelease: true	
+          title: "Development Build"	
+          files: src/dist/HeadsetControl_SystemTray.exe
