@@ -4,7 +4,7 @@ import os
 import time
 import tempfile
 import webbrowser
-
+import pkg_resources
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
 
