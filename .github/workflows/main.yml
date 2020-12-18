@@ -31,5 +31,5 @@ jobs:
           title: "Development Build"	
           files: | 
             requirements.txt
-            *.exe
+            *.py
           
