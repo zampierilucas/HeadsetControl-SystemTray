@@ -31,5 +31,6 @@ jobs:
           title: "Development Build"	
           files: | 
             requirements.txt
-            src/*.exe
+            src/dist/windows/*.exe
+            dist/windows/*.exe
           
