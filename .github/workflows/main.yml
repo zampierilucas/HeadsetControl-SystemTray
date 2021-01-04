@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - name: Install Python dependencies
+        uses: py-actions/py-dependency-install@v2
+        with:
+          path: "requirements.txt"
+      
       - name: Package Application
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
