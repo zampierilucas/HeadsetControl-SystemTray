@@ -31,7 +31,7 @@ jobs:
       - name: Package Application
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
-          path: src
+          path: .
           spec: HeadsetControl_SystemTray.spec
         
       - uses: "marvinpinto/action-automatic-releases@latest"	
