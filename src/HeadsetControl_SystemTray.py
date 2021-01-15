@@ -1,9 +1,9 @@
 # TODO Added hysteresis
 
-import os
-import time
+from time import sleep
 import tempfile
 import webbrowser
+import subprocess
 import pkg_resources
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
@@ -30,7 +30,7 @@ def headset_status():
     global font_type
 
     # Get headset data
-    output = os.popen('headsetcontrol -bc').read() or False
+    output = subprocess.check_output('headsetcontrol -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
 
     # Not connected
     if not output:
@@ -97,7 +97,7 @@ def mySystray(systray):
             img.save(image)
             systray.update(icon=image)
 
-        time.sleep(10)
+        sleep(10)
 
 
 menu_options = (("About", None, about),)
