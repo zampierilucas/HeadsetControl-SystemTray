@@ -32,7 +32,7 @@ jobs:
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: src
-          spec: src/HeadsetControl_SystemTray.spec
+          spec: HeadsetControl_SystemTray.spec
         
       - uses: "marvinpinto/action-automatic-releases@latest"	
         with:	
