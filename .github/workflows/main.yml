@@ -32,7 +32,6 @@ jobs:
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: .
-          spec: HeadsetControl_SystemTray.spec
         
       - uses: "marvinpinto/action-automatic-releases@latest"	
         with:	
