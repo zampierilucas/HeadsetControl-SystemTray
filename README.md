@@ -5,7 +5,7 @@ A [Sapd/HeadsetControl](https://github.com/Sapd/HeadsetControl) system tray indi
 For a list of supported devices please check [Sapd/HeadsetControl](https://github.com/Sapd/HeadsetControl).  
 
 ### Images
-Over 25%                   |  Under 25%                |  Over     15%             | Charging 
+Over 25%                   |  Under 25%                |  Under     15%             | Charging 
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
 ![On Battery white](images/headset-battery-white-indicator.png)  |  ![On Battery yellow](images/headset-battery-yellow-indicator.png) | ![On Battery red](images/headset-battery-red-indicator.png) | ![Charging](images/headset-charge-indicator.png)
 
