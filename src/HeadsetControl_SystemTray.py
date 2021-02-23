@@ -4,6 +4,7 @@ from time import sleep
 import tempfile
 import webbrowser
 import subprocess
+import os
 import pkg_resources
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
@@ -30,7 +31,7 @@ def headset_status():
     global font_type
 
     # Get headset data
-    output = subprocess.check_output('headsetcontrol -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
+    output = subprocess.check_output(os.getcwd()+'\lib\headsetcontrol -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
 
     # Not connected
     if not output:
