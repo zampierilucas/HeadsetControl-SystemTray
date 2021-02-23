@@ -31,22 +31,28 @@ def headset_status():
     global font_type
 
     # Get headset data
-    output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True,
-                                     stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
+    try:
+        output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception as e:
+        output = False
 
     # Not connected
     if not output:
+        pos = 5
+        r, g, b = 255, 0, 0
+        font_type = ImageFont.truetype("holomdl2.ttf", 45)
+        reload(2)
         systray_output = -1
 
     # Charging or 100%
     elif int(output) < 0 or int(output) == 100:
         pos = 0
         r, g, b = 255, 255, 0
+        font_type = ImageFont.truetype("holomdl2.ttf", 50)
+
         systray_output = ""
         if int(output) == 100:
             b = 255
-
-        font_type = ImageFont.truetype("holomdl2.ttf", 50)
 
     # On Battery
     else:
@@ -73,15 +79,16 @@ def about(_):
     webbrowser.open('https://github.com/zampierilucas/HeadsetControl-SystemTray')  # Go to example.com
 
 
-def reload(_):
+def reload(time):
     global loop_time
-    loop_time = 0
+    loop_time = time if isinstance(time, int) else 0
 
 
 def percentage_systray(systray):
     global font_type
     global loop_time
     font_type = ImageFont.truetype("seguisb.ttf", 37)
+    systray.start()
 
     while main_loop:
         if loop_time <= 0:
@@ -94,22 +101,21 @@ def percentage_systray(systray):
 
             # Headset not connected
             if result == -1:
-                systray.shutdown()
+                systray_icon.text((pos, -1), "", fill=(r, g, b), font=font_type)
+                systray_icon.text((pos, -1), "", fill=(r, g, b), font=font_type)
 
             # Update state
             else:
-                systray.start()
-
                 # add text to the image
                 systray_icon.text((pos, -1), f"{result}", fill=(r, g, b), font=font_type)
-
-                img.save(image)
-                systray.update(icon=image)
 
             loop_time = 60
         else:
             loop_time -= 1
             sleep(1)
+
+        img.save(image)
+        systray.update(icon=image)
 
 
 r, g, b = 255, 255, 255  # Icon Color
