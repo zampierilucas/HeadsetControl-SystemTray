@@ -1,40 +1,29 @@
 # TODO Added hysteresis
 
 from time import sleep
-import tempfile
 import webbrowser
 import subprocess
 import os
-import sys
 import pkg_resources
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
 
-image = f"{tempfile.gettempdir()}\pil_text.ico"
 
-# Icon Color
-r, g, b = 255, 255, 255
-
-# Center icon
-pos = 10
-
-main_loop = True
-
-
-def on_quit_callback(systray):
+def on_quit_callback(_):
     global main_loop
     main_loop = False
+
 
 def resource_path(relative_path):
     try:
         # Get PyInstaller temp path
-        base_path = sys._MEIPASS
+        base_path = os.sys._MEIPASS
     except Exception:
         # Get current path
-        base_path = os.getcwd()
+        base_path = os.getcwd() + "\lib"
 
-    print(base_path)
     return base_path + relative_path
+
 
 def headset_status():
     global r, g, b
@@ -42,7 +31,8 @@ def headset_status():
     global font_type
 
     # Get headset data
-    output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
+    output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True,
+                                     stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
 
     # Not connected
     if not output:
@@ -79,41 +69,58 @@ def headset_status():
     return systray_output
 
 
-def about(systray):
+def about(_):
     webbrowser.open('https://github.com/zampierilucas/HeadsetControl-SystemTray')  # Go to example.com
 
 
-def mySystray(systray):
+def reload(_):
+    global loop_time
+    loop_time = 0
+
+
+def percentage_systray(systray):
     global font_type
+    global loop_time
     font_type = ImageFont.truetype("seguisb.ttf", 37)
 
     while main_loop:
-        # Create image
-        img = Image.new('RGBA', (50, 50), color=(r, g, b, 0))
-        systray_icon = ImageDraw.Draw(img)
-        systray_icon.rectangle([(0, 100), (50, 50)], fill=(39, 112, 229), outline=None)
+        if loop_time <= 0:
+            # Create image
+            img = Image.new('RGBA', (50, 50), color=(r, g, b, 0))
+            systray_icon = ImageDraw.Draw(img)
+            systray_icon.rectangle([(0, 100), (50, 50)], fill=(39, 112, 229), outline=None)
 
-        result = headset_status()
+            result = headset_status()
 
-        # Headset not connected
-        if result == -1:
-            systray.shutdown()
+            # Headset not connected
+            if result == -1:
+                systray.shutdown()
 
-        # Update state
+            # Update state
+            else:
+                systray.start()
+
+                # add text to the image
+                systray_icon.text((pos, -1), f"{result}", fill=(r, g, b), font=font_type)
+
+                img.save(image)
+                systray.update(icon=image)
+
+            loop_time = 10
         else:
-            systray.start()
-
-            # add text to the image
-            systray_icon.text((pos, -1), f"{result}", fill=(r, g, b), font=font_type)
-
-            img.save(image)
-            systray.update(icon=image)
-
-        sleep(10)
+            loop_time -= 1
+            sleep(1)
 
 
-menu_options = (("About", None, about),)
-systray = SysTrayIcon(image, "HeadsetControl-SystemTray", menu_options, on_quit=on_quit_callback)
-mySystray(systray)
+r, g, b = 255, 255, 255  # Icon Color
+pos = 10  # Center icon
+main_loop = True
+loop_time = 0  # Sleep time, between updated
+font_type = ImageFont.truetype("seguisb.ttf", 37)  # default font
+image = resource_path("\pil_text.ico")  # Systray icon tmp path
 
-systray.shutdown()
+menu_options = (("About", None, about), ("Reload", None, reload),)
+systray_module = SysTrayIcon(image, "HeadsetControl-SystemTray", menu_options, on_quit=on_quit_callback)
+percentage_systray(systray_module)
+
+systray_module.shutdown()
