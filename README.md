@@ -17,7 +17,7 @@ The System tray icon hides itself, so it does't consumes space on your system tr
 Download the latest release from the [github releases pages](https://github.com/zampierilucas/HeadsetControl-SystemTray/releases).  
 Double-click to run, no installation needed.
 
-## Open automaticaly
+## Start on Startup
 Open Task Schedules, add the HeadsetControl_SystemTray.exe to the startup schedule.
 
 ## Building
