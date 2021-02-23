@@ -5,6 +5,7 @@ import tempfile
 import webbrowser
 import subprocess
 import os
+import sys
 import pkg_resources
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
@@ -24,6 +25,16 @@ def on_quit_callback(systray):
     global main_loop
     main_loop = False
 
+def resource_path(relative_path):
+    try:
+        # Get PyInstaller temp path
+        base_path = sys._MEIPASS
+    except Exception:
+        # Get current path
+        base_path = os.getcwd()
+
+    print(base_path)
+    return base_path + relative_path
 
 def headset_status():
     global r, g, b
@@ -31,7 +42,7 @@ def headset_status():
     global font_type
 
     # Get headset data
-    output = subprocess.check_output(os.getcwd()+'\lib\headsetcontrol -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
+    output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
 
     # Not connected
     if not output:
