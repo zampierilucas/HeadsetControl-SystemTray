@@ -106,7 +106,7 @@ def percentage_systray(systray):
                 img.save(image)
                 systray.update(icon=image)
 
-            loop_time = 10
+            loop_time = 60
         else:
             loop_time -= 1
             sleep(1)
