@@ -42,7 +42,6 @@ def headset_status():
     global font_type
 
     # Get headset data
-    sleep(60)
     output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
 
     # Not connected
