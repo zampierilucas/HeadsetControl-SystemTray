@@ -27,8 +27,10 @@ def on_quit_callback(systray):
 
 def resource_path(relative_path):
     try:
+        # Get PyInstaller temp path
         base_path = sys._MEIPASS
     except Exception:
+        # Get current path
         base_path = os.getcwd()
 
     print(base_path)
@@ -40,7 +42,7 @@ def headset_status():
     global font_type
 
     # Get headset data
-    output = subprocess.check_output(resource_path('\lib\headsetcontrol') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
+    output = subprocess.check_output(resource_path('\lib\headsetcontrol.exe') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL) or False
 
     # Not connected
     if not output:
