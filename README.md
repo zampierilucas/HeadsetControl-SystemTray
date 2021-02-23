@@ -5,23 +5,23 @@ A [Sapd/HeadsetControl](https://github.com/Sapd/HeadsetControl) system tray indi
 For a list of supported devices please check [Sapd/HeadsetControl](https://github.com/Sapd/HeadsetControl).  
 
 ### Images
-#### Over 25%
-![On Battery white](images/headset-battery-white-indicator.png)
+Over 25%                   |  Under 25%                |  Over     15%             | Charging 
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+![On Battery white](images/headset-battery-white-indicator.png)  |  ![On Battery yellow](images/headset-battery-yellow-indicator.png) | ![On Battery red](images/headset-battery-red-indicator.png) | ![Charging](images/headset-charge-indicator.png)
 
-#### Under 25%
-![On Battery yellow](images/headset-battery-yellow-indicator.png)
-
-#### Over 15%
-![On Battery red](images/headset-battery-red-indicator.png)
-
-#### While charging
-![Charging](images/headset-charge-indicator.png)
 
 #### When disconnected/sleeping
 The System tray icon hides itself, so it does't consumes space on your system tray.
 
+## Usage
+Download the latest release from the [github releases pages](https://github.com/zampierilucas/HeadsetControl-SystemTray/releases).  
+Double-click to run, no installation needed.
+
+## Open automaticaly
+Open Task Schedules, add the HeadsetControl_SystemTray.exe to the startup schedule.
+
+## Building
 ### Requirements
-[Sapd/HeadsetControl](https://github.com/Sapd/HeadsetControl) need to be installed and available on your PATH.
 [Python3 And pip](https://www.python.org/downloads/)
 
 ### Installation
@@ -32,7 +32,7 @@ cd HeadsetControl-SystemTray
 pip install .
 ```
 
-### Usage
+### Running
 ```
-pythonw main.py
+python _init_.py
 ```
