@@ -5,7 +5,10 @@ block_cipher = None
 
 a = Analysis(['HeadsetControl_SystemTray.py'],
              binaries=[],
-             datas=[('..\lib\headsetcontrol.exe','..\lib\libhidapi-0.dll','.')],
+             datas=[
+				 ('..\lib\headsetcontrol.exe','.'),
+				 ('..\lib\libhidapi-0.dll','.')
+			 ],
              hiddenimports=["infi.systray"],
              hookspath=[],
              runtime_hooks=[],
