@@ -7,6 +7,7 @@ import os
 import pkg_resources
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
+import tempfile
 
 
 def on_quit_callback(_):
@@ -19,8 +20,9 @@ def resource_path(relative_path):
         # Get PyInstaller temp path
         base_path = os.sys._MEIPASS
     except Exception:
+        base_path = tempfile.gettempdir()
         # Get current path
-        base_path = os.getcwd() + "\lib"
+        # base_path = os.getcwd() + "\lib"
 
     return base_path + relative_path
 
