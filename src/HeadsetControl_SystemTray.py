@@ -5,6 +5,9 @@ import webbrowser
 import subprocess
 import os
 import pkg_resources
+import logging
+import logging.handlers
+import tempfile
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
 
@@ -21,7 +24,9 @@ def resource_path(relative_path):
     except Exception:
         # Get current path
         base_path = os.getcwd() + "\lib"
+        errlog.debug('Failed to get MEI')
 
+    errlog.debug(f'Got os Path {base_path + relative_path}')
     return base_path + relative_path
 
 
@@ -32,12 +37,15 @@ def headset_status():
 
     # Get headset data
     try:
-        output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True,
+                                         stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
+        errlog.debug(f'Failed to get Headset status with error {e}')
         output = False
 
     # Not connected
     if not output:
+        errlog.debug(f'Headset not connected {output}')
         pos = 5
         r, g, b = 255, 0, 0
         font_type = ImageFont.truetype("holomdl2.ttf", 45)
@@ -76,7 +84,7 @@ def headset_status():
 
 
 def about(_):
-    webbrowser.open('https://github.com/zampierilucas/HeadsetControl-SystemTray')  # Go to example.com
+    webbrowser.open('https://github.com/zampierilucas/HeadsetControl-SystemTray')
 
 
 def reload(time):
@@ -89,7 +97,7 @@ def percentage_systray(systray):
     global loop_time
     font_type = ImageFont.truetype("seguisb.ttf", 37)
     systray.start()
-
+    img = Image.new('RGBA', (50, 50), color=(r, g, b, 0))
     while main_loop:
         if loop_time <= 0:
             # Create image
@@ -118,6 +126,15 @@ def percentage_systray(systray):
         systray.update(icon=image)
 
 
+errlog = logging.getLogger("ErrorLogger")
+errlog.setLevel(logging.DEBUG)
+eh = logging.handlers.RotatingFileHandler(f'{tempfile.gettempdir()}\headsetcontrol.log', maxBytes=1048576, backupCount=4)
+eh.setFormatter(
+    logging.Formatter("%(asctime)s | %(filename)s:%(lineno)d | %(levelname)s: %(message)s", datefmt="%d/%m/%y (%X)"))
+errlog.addHandler(eh)
+
+
+errlog.debug('This message should go to the log file')
 r, g, b = 255, 255, 255  # Icon Color
 pos = 10  # Center icon
 main_loop = True
