@@ -7,7 +7,7 @@ with open("src/requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="HeadsetControl-SystemTray",
-    version="0.0.1",
+    version="1.4",
     author="Lucas Zampieri",
     author_email="lcasmz54@gmail.com",
     description="A HeadsetControl battery status indicator for Windows.",
