@@ -1,0 +1,58 @@
+name: Bump HeadsetControl to latest release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Fetch latest release
+        id: get_latest_release
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const { data: releases } = await github.repos.listReleases({
+              owner: 'sapd', repo: 'HeadsetControl', per_page: 1, });
+
+            console.log(releases[0].tag_name);
+            core.setOutput('latest_tag', releases[0].tag_name);
+            core.setOutput('download_url', releases[0].assets[0].browser_download_url);
+
+      - name: Download file from latest release
+        run: |
+          wget ${{ steps.get_latest_release.outputs.download_url }} -O downloaded_file
+
+      - name: Unzip release asset
+        run: unzip -o downloaded_file -d lib/
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{vars.GIT_NAME}}"
+          git config --global user.email ${{vars.GIT_EMAIL}}
+
+      - name: Commit changes
+        run: |
+          git clean -df
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Bump HeadsetControl to ${{ steps.get_latest_release.outputs.latest_tag }}"
+          title: "Bump HeadsetControl to ${{ steps.get_latest_release.outputs.latest_tag }}"
+          committer: "${{ vars.GIT_NAME }} <${{ vars.GIT_EMAIL }}>"
+          author: "${{ vars.GIT_NAME }} <${{ vars.GIT_EMAIL }}>"
+          branch: ${{ steps.get_latest_release.outputs.latest_tag }}
+          base: master
+          signoff: true
+          delete-branch: true
