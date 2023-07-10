@@ -1,6 +1,6 @@
-name: Windows-CI
+name: Build-and-Release
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
@@ -17,22 +17,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - uses: actions/setup-python@v2
         with:
           python-version: '3.x' # Version range or exact version of a Python version to use, using SemVer's version range syntax
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-      
+
       - name: Package Application
         uses: JackMcKew/pyinstaller-action-windows@main
         with:
           path: src
           spec: HeadsetControl_SystemTray.spec
-        
-      - uses: "marvinpinto/action-automatic-releases@latest"	
-        with:	
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"	
-          automatic_release_tag: "latest"	
-          prerelease: true	
-          title: "Development Build"	
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
           files: "src/dist/windows/*.exe"
