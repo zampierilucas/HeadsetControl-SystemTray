@@ -8,6 +8,7 @@ import pkg_resources
 import logging
 import logging.handlers
 import tempfile
+import json
 from infi.systray import SysTrayIcon
 from PIL import Image, ImageDraw, ImageFont
 
@@ -35,37 +36,77 @@ def headset_status():
     global pos
     global font_type
 
-    # Get headset data
+    # Get headset data using JSON output
     try:
-        output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True,
-                                         stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except Exception as e:
+        output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' --output JSON', shell=True,
+                                         stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
+        data = json.loads(output)
+    except subprocess.CalledProcessError as e:
         errlog.debug(f'Failed to get Headset status with error {e}')
-        output = False
+        data = None
+    except json.JSONDecodeError as e:
+        errlog.debug(f'Failed to parse JSON output: {e}')
+        data = None
+    except Exception as e:
+        errlog.debug(f'Unexpected error getting headset status: {e}')
+        data = None
 
     # Not connected
-    if not output:
-        errlog.debug(f'Headset not connected {output}')
+    if not data:
+        errlog.debug('No headset connected or no valid data')
         pos = 5
         r, g, b = 255, 0, 0
         font_type = ImageFont.truetype("holomdl2.ttf", 45)
         reload(2)
-        systray_output = -1
+        return -1
+
+    # Check if we have devices and get the first one
+    if data.get('device_count', 0) == 0:
+        errlog.debug('No devices found')
+        pos = 5
+        r, g, b = 255, 0, 0
+        font_type = ImageFont.truetype("holomdl2.ttf", 45)
+        reload(2)
+        return -1
+
+    device = data['devices'][0]
+    
+    # Check if device has battery capability
+    if 'CAP_BATTERY_STATUS' not in device.get('capabilities', []):
+        errlog.debug('Device does not support battery status')
+        pos = 5
+        r, g, b = 255, 0, 0
+        font_type = ImageFont.truetype("holomdl2.ttf", 45)
+        reload(2)
+        return -1
+    
+    # Get battery status using -b flag
+    try:
+        battery_output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -b', shell=True,
+                                               stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
+        battery_level = int(battery_output.strip())
+    except:
+        errlog.debug('Failed to get battery level')
+        pos = 5
+        r, g, b = 255, 0, 0
+        font_type = ImageFont.truetype("holomdl2.ttf", 45)
+        reload(2)
+        return -1
 
     # Charging or 100%
-    elif int(output) < 0 or int(output) == 100:
+    if battery_level < 0 or battery_level == 100:
         pos = 0
         r, g, b = 255, 255, 0
         font_type = ImageFont.truetype("holomdl2.ttf", 50)
 
         systray_output = ""
-        if int(output) == 100:
+        if battery_level == 100:
             b = 255
 
     # On Battery
     else:
         pos = 10
-        systray_output = int(output)
+        systray_output = battery_level
 
         # Set color based on battery level
         # Red
