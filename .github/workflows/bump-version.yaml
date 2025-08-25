@@ -21,11 +21,32 @@ jobs:
         with:
           script: |
             const { data: releases } = await github.repos.listReleases({
-              owner: 'sapd', repo: 'HeadsetControl', per_page: 1, });
+              owner: 'sapd', repo: 'HeadsetControl' });
 
-            console.log(releases[0].tag_name);
-            core.setOutput('latest_tag', releases[0].tag_name);
-            core.setOutput('download_url', releases[0].assets[0].browser_download_url);
+            // Find the latest non-prerelease, non-continuous release
+            const stableRelease = releases.find(release => 
+              !release.prerelease && 
+              !release.draft && 
+              release.tag_name !== 'continuous'
+            );
+
+            if (!stableRelease) {
+              throw new Error('No stable release found');
+            }
+
+            // Find the Windows binary asset
+            const windowsAsset = stableRelease.assets.find(asset => 
+              asset.name.includes('windows') && asset.name.endsWith('.zip')
+            );
+
+            if (!windowsAsset) {
+              throw new Error('No Windows binary found in release');
+            }
+
+            console.log(stableRelease.tag_name);
+            console.log('Windows asset:', windowsAsset.name);
+            core.setOutput('latest_tag', stableRelease.tag_name);
+            core.setOutput('download_url', windowsAsset.browser_download_url);
 
       - name: Download file from latest release
         run: |
@@ -41,7 +62,7 @@ jobs:
 
       - name: Add changes to git
         run: |
-          git add lib/headsetcontrol
+          git add lib/
 
       - name: Create Pull Request
         id: cpr

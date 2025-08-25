@@ -23,7 +23,7 @@ def resource_path(relative_path):
         base_path = os.sys._MEIPASS
     except Exception:
         # Get current path
-        base_path = os.getcwd() + "\lib"
+        base_path = os.path.join(os.getcwd(), "lib")
         errlog.debug('Failed to get MEI')
 
     errlog.debug(f'Got os Path {base_path + relative_path}')
@@ -37,7 +37,7 @@ def headset_status():
 
     # Get headset data
     try:
-        output = subprocess.check_output(resource_path('\headsetcontrol.exe') + ' -bc', shell=True,
+        output = subprocess.check_output(resource_path('/headsetcontrol.exe') + ' -bc', shell=True,
                                          stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception as e:
         errlog.debug(f'Failed to get Headset status with error {e}')
@@ -136,7 +136,7 @@ def percentage_systray(systray):
 
 errlog = logging.getLogger("ErrorLogger")
 errlog.setLevel(logging.DEBUG)
-eh = logging.handlers.RotatingFileHandler(f'{tempfile.gettempdir()}\headsetcontrol.log', maxBytes=1048576, backupCount=4)
+eh = logging.handlers.RotatingFileHandler(os.path.join(tempfile.gettempdir(), 'headsetcontrol.log'), maxBytes=1048576, backupCount=4)
 eh.setFormatter(
     logging.Formatter("%(asctime)s | %(filename)s:%(lineno)d | %(levelname)s: %(message)s", datefmt="%d/%m/%y (%X)"))
 errlog.addHandler(eh)
@@ -148,7 +148,7 @@ pos = 10  # Center icon
 main_loop = True
 loop_time = 0  # Sleep time, between updated
 font_type = ImageFont.truetype("seguisb.ttf", 37)  # default font
-image = resource_path("\pil_text.ico")  # Systray icon tmp path
+image = resource_path("/pil_text.ico")  # Systray icon tmp path
 
 menu_options = (("About", None, about), ("Reload", None, reload),)
 systray_module = SysTrayIcon(image, "HeadsetControl-SystemTray", menu_options, on_quit=on_quit_callback)
