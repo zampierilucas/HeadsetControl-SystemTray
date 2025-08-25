@@ -98,6 +98,7 @@ def percentage_systray(systray):
     font_type = ImageFont.truetype("seguisb.ttf", 37)
     systray.start()
     img = Image.new('RGBA', (50, 50), color=(r, g, b, 0))
+    icon_visible = True
     while main_loop:
         if loop_time <= 0:
             # Create image
@@ -109,11 +110,16 @@ def percentage_systray(systray):
 
             # Headset not connected
             if result == -1:
-                systray_icon.text((pos, -1), "", fill=(r, g, b), font=font_type)
-                systray_icon.text((pos, -1), "", fill=(r, g, b), font=font_type)
+                if icon_visible:
+                    systray.shutdown()
+                    icon_visible = False
 
             # Update state
             else:
+                if not icon_visible:
+                    systray.start()
+                    icon_visible = True
+                    
                 # add text to the image
                 systray_icon.text((pos, -1), f"{result}", fill=(r, g, b), font=font_type)
 
@@ -122,8 +128,10 @@ def percentage_systray(systray):
             loop_time -= 1
             sleep(1)
 
-        img.save(image)
-        systray.update(icon=image)
+        # Only update icon if it's visible
+        if icon_visible:
+            img.save(image)
+            systray.update(icon=image)
 
 
 errlog = logging.getLogger("ErrorLogger")
