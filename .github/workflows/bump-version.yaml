@@ -39,9 +39,9 @@ jobs:
           git config --global user.name "${{vars.GIT_NAME}}"
           git config --global user.email ${{vars.GIT_EMAIL}}
 
-      - name: Commit changes
+      - name: Add changes to git
         run: |
-          git clean -df
+          git add lib/headsetcontrol
 
       - name: Create Pull Request
         id: cpr
